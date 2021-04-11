@@ -5712,6 +5712,13 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-native-camera@^3.43.4":
+  "integrity" "sha512-qC13OtYmC3P/9WW31ZTgIQLTxG1kQqbillQRhyvWUIcyMnlFVclKDVm1Mk3XkQKTKGUckG6P5bMroLDRrUFhYg=="
+  "resolved" "https://registry.npmjs.org/react-native-camera/-/react-native-camera-3.43.4.tgz"
+  "version" "3.43.4"
+  dependencies:
+    "prop-types" "^15.6.2"
+
 "react-native-gesture-handler@*", "react-native-gesture-handler@^1.10.3", "react-native-gesture-handler@>= 1.0.0":
   "integrity" "sha512-cBGMi1IEsIVMgoox4RvMx7V2r6bNKw0uR1Mu1o7NbuHS6BRSVLq0dP34l2ecnPlC+jpWd3le6Yg1nrdCjby2Mw=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz"

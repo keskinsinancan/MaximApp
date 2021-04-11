@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import SearchBar from '../components/SearchBar';
 
-
-
 const SearchScreen = () => {
     const [term, setTerm] = useState("");
     return (

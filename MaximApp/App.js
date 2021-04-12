@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import TemplateScreen from './src/screens/TemplateScreen'
 import CameraScreen from './src/screens/CameraScreen';
 import ChooseImageScreen from './src/screens/ChooseImageScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import ImageScreen from './src/screens/ImageScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +25,7 @@ export default class App extends Component {
           />
           <Stack.Screen name="ChooseImage" component={ChooseImageScreen} />
           <Stack.Screen name="Camera" component={CameraScreen} />
+          <Stack.Screen name="Image" component={ImageScreen} />
 
         </Stack.Navigator>
       </NavigationContainer>

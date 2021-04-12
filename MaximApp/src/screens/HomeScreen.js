@@ -6,8 +6,7 @@ const HomeScreen = ({navigation}) => {
     const CameraIconOnPress = () => {
         navigation.navigate ("Camera");
     }
-    
-    
+
     const ImportIconOnPress = () => {
         navigation.navigate ("ChooseImage");
     }
@@ -34,15 +33,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flex: 1,
     },
-
-    openCamera: {
-
-    },
-
-    importImage: {
-
-    },
-
     icon: {
         fontSize: 60,
         alignSelf: "center",

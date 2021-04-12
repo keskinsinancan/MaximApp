@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-export default class ChooseImageScreen extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
-    render() {
-        return (
-            <View>
-                <Text>this is home screen</Text>
-            </View>
-        );
-    }
+const ChooseImageScreen = () => {
+    return (
+        <View>
+            <Image
+                source={{ uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png' }}
+                style={styles.preview}
+            />
+        </View>
+    );
 }
 
-const styles = StyleSheet.create({
+export default ChooseImageScreen;
 
+const styles = StyleSheet.create({
+    preview: {
+        width: 200,
+        height: 200
+    }
 });

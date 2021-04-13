@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ImageScreen = ({ navigation, route }) => {
     const { path } = route.params;
+    //asdasd
     const[image, setImage] = useState(path);
     return (
         <View style={styles.container}>

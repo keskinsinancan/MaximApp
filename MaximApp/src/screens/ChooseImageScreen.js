@@ -1,13 +1,54 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image, ScrollView, TouchableHighlight } from 'react-native';
+import CameraRoll from "@react-native-community/cameraroll";
 
-const ChooseImageScreen = () => {
+
+const ChooseImageScreen = ({ navigation }) => {
+    const [images, setImages] = useState([]);
+    useEffect(() => {
+        GetPhotosFromRoll();
+    }, []);
+
+    const GetPhotosFromRoll = () => {
+        console.log("called");
+        CameraRoll.getPhotos({
+            first: 20,
+            assetType: "Photos",
+            
+        })
+            .then(r => {
+                setImages(r.edges);
+            })
+            .catch((err) => {
+                console.log("Error loading images => --- " + err);
+            });
+    };
+
+    const ImageOnPress = (i, uri) => {
+        console.log("pressed");
+        console.log(i);
+        console.log(uri);
+    }
+
     return (
         <View>
-            <Image
-                source={{ uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png' }}
-                style={styles.preview}
-            />
+            <ScrollView>
+                {images.map((p, i) => {
+                    return (
+                        <TouchableHighlight key={i} onPress = {() => ImageOnPress(i, p.node.image.uri) }>
+                            <Image
+                                key={i}
+                                style={{
+                                    width: 300,
+                                    height: 100,
+                                }}
+                                source={{ uri: p.node.image.uri }}
+                            />
+                        </TouchableHighlight>
+
+                    );
+                })}
+            </ScrollView>
         </View>
     );
 }

@@ -1,63 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, ScrollView, TouchableHighlight } from 'react-native';
+import React, { useState, useEffect, Component } from 'react';
+import { View, StyleSheet, Image, ScrollView, TouchableHighlight, Text } from 'react-native';
 import CameraRoll from "@react-native-community/cameraroll";
 
 
-const ChooseImageScreen = ({ navigation }) => {
-    const [images, setImages] = useState([]);
-    useEffect(() => {
-        GetPhotosFromRoll();
-    }, []);
+export class ChooseImageScreen extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            images: [],
+            lastCursor: null,
+            noMorePhotos: false,
+            loadingMore: false,
+        };
+    }
 
-    const GetPhotosFromRoll = () => {
-        console.log("called");
-        CameraRoll.getPhotos({
-            first: 20,
-            assetType: "Photos",
-            
-        })
+    componentDidMount() {
+        this.LoadImages();
+    }
+
+    LoadImages() {
+        const fetchParams = {
+            first: 25,
+            groupTypes: 'SavedPhotos',
+            assetType: 'Photos',
+        };
+
+        CameraRoll.getPhotos(fetchParams)
             .then(r => {
-                setImages(r.edges);
+                this.setState(previousState => ({
+                    images: previousState.images.concat(r.edges)
+                }))
             })
             .catch((err) => {
                 console.log("Error loading images => --- " + err);
             });
-    };
-
-    const ImageOnPress = (i, uri) => {
-        console.log("pressed");
-        console.log(i);
-        console.log(uri);
     }
 
-    return (
-        <View>
-            <ScrollView>
-                {images.map((p, i) => {
-                    return (
-                        <TouchableHighlight key={i} onPress = {() => ImageOnPress(i, p.node.image.uri) }>
-                            <Image
-                                key={i}
-                                style={{
-                                    width: 300,
-                                    height: 100,
-                                }}
-                                source={{ uri: p.node.image.uri }}
-                            />
-                        </TouchableHighlight>
+    ImageOnPress(uri) {
+        this.props.navigation.navigate("Image", {
+            path : uri
+          });
+    }
 
-                    );
-                })}
-            </ScrollView>
-        </View>
-    );
+    render() {
+        return (
+            <View>
+                <ScrollView>
+                    {this.state.images.map((p, i) => {
+                        return (
+                            <TouchableHighlight key={i} onPress={() => this.ImageOnPress(p.node.image.uri)}>
+                                <Image
+                                    key={i}
+                                    style={{
+                                        width: 300,
+                                        height: 100,
+                                    }}
+                                    source={{ uri: p.node.image.uri }}
+                                />
+                            </TouchableHighlight>
+                        );
+                    })}
+                </ScrollView>
+            </View>
+        );
+    }
 }
 
 export default ChooseImageScreen;
+
 
 const styles = StyleSheet.create({
     preview: {
         width: 200,
         height: 200
+    },
+
+    container : {
+
     }
 });

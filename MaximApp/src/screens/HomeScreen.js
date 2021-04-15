@@ -1,27 +1,34 @@
+import react from 'react';
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const HomeScreen = ({navigation}) => {
-    const CameraIconOnPress = () => {
-        navigation.navigate ("Camera");
+export class HomeScreen extends Component {
+    constructor(props) {
+        super(props);
     }
 
-    const ImportIconOnPress = () => {
-        navigation.navigate ("ChooseImage");
+    CameraIconOnPress() {
+        this.props.navigation.navigate("Camera");
     }
 
-    return (
-        <View style={styles.container}>
-            <TouchableHighlight onPress={CameraIconOnPress} style={styles.touchableHighlight} >
-                <Icon name="camera" style={styles.icon} />
-            </TouchableHighlight>
+    ImportIconOnPress() {
+        this.props.navigation.navigate("ChooseImage");
+    }
 
-            <TouchableHighlight onPress={ImportIconOnPress} style={styles.touchableHighlight}>
-                <Icon name="image" style={styles.icon} />
-            </TouchableHighlight>
-        </View>
-    );
+    render() {
+        return (
+            <View style={styles.container} >
+                <TouchableHighlight onPress={() => this.CameraIconOnPress()} style={styles.touchableHighlight} >
+                    <Icon name="camera" style={styles.icon} />
+                </TouchableHighlight>
+
+                <TouchableHighlight onPress={() => this.ImportIconOnPress()} style={styles.touchableHighlight}>
+                    <Icon name="image" style={styles.icon} />
+                </TouchableHighlight>
+            </View>
+        );
+    }
 }
 
 export default HomeScreen;
@@ -41,9 +48,9 @@ const styles = StyleSheet.create({
 
     touchableHighlight: {
         backgroundColor: '#c0c0c0',
-        borderColor : '#000000',
-        borderWidth : 1,
-        borderRadius : 5,
-        margin : 5
+        borderColor: '#000000',
+        borderWidth: 1,
+        borderRadius: 5,
+        margin: 5
     }
 });

@@ -2,7 +2,6 @@
 import React, { PureComponent } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import CameraRoll from "@react-native-community/cameraroll";
 
 export default class CameraScreen extends PureComponent {
   constructor(props) {

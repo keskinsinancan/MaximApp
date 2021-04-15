@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import { View, Alert, StyleSheet, Image, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CameraRoll from "@react-native-community/cameraroll";
 
-const ImageScreen = ({ navigation, route }) => {
-    const { path } = route.params;
-    const [image, setImage] = useState(path);
+export class ImageScreen extends Component {
+    constructor(props) {
+        super(props);
+        const { path } = this.props.route.params;
+        this.state = {
+            image: path
+        }
+    }
 
-    async function HasAndroidPermission() {
+    async HasAndroidPermission() {
         const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
         const hasPermission = await PermissionsAndroid.check(permission);
         if (hasPermission) {
@@ -17,13 +22,13 @@ const ImageScreen = ({ navigation, route }) => {
         return status === "granted";
     }
 
-    async function SaveImageOnPress() {
+    async SaveImageOnPress() {
         try {
-            if (Platform.OS === "android" && !(await HasAndroidPermission())) {
+            if (Platform.OS === "android" && !(await this.HasAndroidPermission())) {
                 return;
             }
 
-            CameraRoll.save(image, { type: 'photo' });
+            CameraRoll.save(this.state.image, { type: 'photo' });
             Alert.alert(
                 "Success",
                 "Image is saved to the gallery.",
@@ -48,28 +53,31 @@ const ImageScreen = ({ navigation, route }) => {
     }
 
 
-    return (
-        <View style={styles.container}>
-            <Image
-                source={{ uri: image }}
-                style={styles.preview}
-            />
-            <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                <TouchableOpacity style={styles.capture}>
-                    <Icon name="save" style={styles.icon} onPress={() => SaveImageOnPress()} />
-                </TouchableOpacity>
+    render() {
+        return (
+            <View style={styles.container}>
+                <Image
+                    source={{ uri: this.state.image }}
+                    style={styles.preview}
+                />
+                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+                    <TouchableOpacity style={styles.capture}>
+                        <Icon name="save" style={styles.icon} onPress={() => this.SaveImageOnPress()} />
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.capture}>
-                    <Icon name="crop" style={styles.icon} />
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.capture}>
+                        <Icon name="crop" style={styles.icon} />
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.capture} onPress={() => navigation.goBack()} >
-                    <Icon name="camera" style={styles.icon} />
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.capture} onPress={() => navigation.goBack()} >
+                        <Icon name="camera" style={styles.icon} />
+                    </TouchableOpacity>
+                </View>
+
             </View>
+        );
+    }
 
-        </View>
-    );
 }
 
 export default ImageScreen;

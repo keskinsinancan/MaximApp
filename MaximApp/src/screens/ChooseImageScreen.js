@@ -1,7 +1,6 @@
-import React, { useState, useEffect, Component } from 'react';
-import { View, StyleSheet, Image, ScrollView, TouchableHighlight, Text } from 'react-native';
+import React, { Component } from 'react';
+import { View, StyleSheet, Image, TouchableHighlight, FlatList, SafeAreaView, Text } from 'react-native';
 import CameraRoll from "@react-native-community/cameraroll";
-
 
 export class ChooseImageScreen extends Component {
     constructor(props) {
@@ -38,44 +37,49 @@ export class ChooseImageScreen extends Component {
 
     ImageOnPress(uri) {
         this.props.navigation.navigate("Image", {
-            path : uri
-          });
+            path: uri
+        });
     }
 
     render() {
         return (
-            <View>
-                <ScrollView>
-                    {this.state.images.map((p, i) => {
-                        return (
-                            <TouchableHighlight key={i} onPress={() => this.ImageOnPress(p.node.image.uri)}>
+            <SafeAreaView style={styles.container}>
+                <FlatList
+                    data={this.state.images}
+                    renderItem={({ item }) => (
+                        <View
+                            style={{
+                                flex: 1,
+                                flexDirection: 'column',
+                                margin: 1
+                            }}>
+                            <TouchableHighlight onPress = {() => this.ImageOnPress(item.node.image.uri)}>
                                 <Image
-                                    key={i}
-                                    style={{
-                                        width: 300,
-                                        height: 100,
-                                    }}
-                                    source={{ uri: p.node.image.uri }}
+                                    style={styles.imageThumbnail}
+                                    source={{ uri: item.node.image.uri }}
                                 />
                             </TouchableHighlight>
-                        );
-                    })}
-                </ScrollView>
-            </View>
+                        </View>
+                    )}
+                    numColumns={3}
+                    keyExtractor={(item) => item.node.image.uri}
+                />
+            </SafeAreaView>
         );
     }
 }
 
 export default ChooseImageScreen;
 
-
 const styles = StyleSheet.create({
-    preview: {
-        width: 200,
-        height: 200
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: 'white',
     },
-
-    container : {
-
-    }
+    imageThumbnail: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 100,
+    },
 });

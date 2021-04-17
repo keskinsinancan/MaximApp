@@ -13,7 +13,7 @@ export default class App extends Component {
     return (
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName='Search'
+          initialRouteName="Home"
         >
           <Stack.Screen name="Home" component={HomeScreen}
             options={
@@ -26,7 +26,6 @@ export default class App extends Component {
           <Stack.Screen name="ChooseImage" component={ChooseImageScreen} />
           <Stack.Screen name="Camera" component={CameraScreen} />
           <Stack.Screen name="Image" component={ImageScreen} />
-
         </Stack.Navigator>
       </NavigationContainer>
     );

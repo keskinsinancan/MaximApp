@@ -2,10 +2,29 @@
 import React, { PureComponent } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default class CameraScreen extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      cameraType: "front",
+      mirrorMode: false
+    }
+  }
+
+  SwithCameraOnPress() {
+    if (this.state.cameraType === 'back') {
+      this.setState({
+        cameraType: 'front',
+        mirror: true
+      });
+    } else {
+      this.setState({
+        cameraType: 'back',
+        mirror: false
+      });
+    }
   }
 
   render() {
@@ -16,7 +35,8 @@ export default class CameraScreen extends PureComponent {
             this.camera = ref;
           }}
           style={styles.preview}
-          type={RNCamera.Constants.Type.back}
+          type={this.state.cameraType}
+          mirrorMode={this.state.mirrorMode}
           flashMode={RNCamera.Constants.FlashMode.off}
           androidCameraPermissionOptions={{
             title: 'Permission to use camera',
@@ -34,9 +54,16 @@ export default class CameraScreen extends PureComponent {
             console.log(barcodes);
           }}
         />
-        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-            <Text style={{ fontSize: 14 }}> SNAP </Text>
+
+        <View style={styles.menu}>
+          <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("ChooseImage")} >
+            <Icon name="image" style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.capture} onPress={this.takePicture.bind(this)} >
+            <Icon name="camera" style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.capture} onPress={() => this.SwithCameraOnPress()}>
+            <Icon name="switch-camera" style={styles.icon} />
           </TouchableOpacity>
         </View>
       </View>
@@ -48,7 +75,7 @@ export default class CameraScreen extends PureComponent {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);
       this.props.navigation.navigate("Image", {
-        path : data.uri
+        path: data.uri
       });
     }
   };
@@ -65,6 +92,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  menu: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
   capture: {
     flex: 0,
     backgroundColor: '#fff',
@@ -73,19 +105,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     margin: 20,
-  },
-  cancel: {
-    position: 'absolute',
-    right: 20,
-    top: 20,
-    backgroundColor: 'transparent',
-    color: '#FFF',
-    fontWeight: '600',
-    fontSize: 17,
-  },
-
-  previewImage: {
-    width : 200,
-    height : 200
   },
 });

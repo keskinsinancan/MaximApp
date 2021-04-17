@@ -2,13 +2,16 @@ import React, { useState, Component } from 'react';
 import { View, Alert, StyleSheet, Image, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CameraRoll from "@react-native-community/cameraroll";
+import ImagePicker from 'react-native-image-crop-picker';
 
 export class ImageScreen extends Component {
     constructor(props) {
         super(props);
         const { path } = this.props.route.params;
         this.state = {
-            image: path
+            image: path,
+            originalImage: null,
+            isImageCropped: false
         }
     }
 
@@ -23,35 +26,46 @@ export class ImageScreen extends Component {
     }
 
     async SaveImageOnPress() {
-        try {
-            if (Platform.OS === "android" && !(await this.HasAndroidPermission())) {
-                return;
+        console.log("pressed");
+        if (this.state.isImageCropped) {
+            try {
+                if (Platform.OS === "android" && !(await this.HasAndroidPermission())) {
+                    return;
+                }
+
+                CameraRoll.save(this.state.image, { type: 'photo' });
+                { CustomAlert("Success", "Image is saved to the gallery.") }
+            }
+            catch (error) {
+                { CustomAlert("Error", "Error saving image!") }
+            }
+        }
+        else {
+            {
+                CustomAlert("Warning", "Please Crop the Image Before Saving")
             }
 
-            CameraRoll.save(this.state.image, { type: 'photo' });
-            Alert.alert(
-                "Success",
-                "Image is saved to the gallery.",
-                [
-                    { text: "OK", onPress: () => console.log("OK Pressed") }
-                ]
-            );
-        }
-        catch (error) {
-            Alert.alert(
-                "Error",
-                "Error saving image",
-                [
-                    {
-                        text: "OK",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                    },
-                ]
-            );
         }
     }
 
+    async OpenCropperOnPress() {
+        const imageToEdit = this.state.originalImage != null ? this.state.originalImage : this.state.image;
+        ImagePicker.openCropper({
+            path: imageToEdit,
+            enableRotationGesture: false,
+            hideBottomControls: true,
+            compressImageMaxWidth: 180,
+            compressImageMaxHeight: 240
+        }).then(image => {
+            this.setState(previousState => ({
+                image: image.path,
+                originalImage: previousState.image,
+                isImageCropped: true
+            }))
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
 
     render() {
         return (
@@ -60,17 +74,21 @@ export class ImageScreen extends Component {
                     source={{ uri: this.state.image }}
                     style={styles.preview}
                 />
-                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                    <TouchableOpacity style={styles.capture}>
-                        <Icon name="save" style={styles.icon} onPress={() => this.SaveImageOnPress()} />
+                <View style={styles.menu}>
+                    <TouchableOpacity style={styles.capture} onPress={() => this.SaveImageOnPress()} >
+                        <Icon name="save" style={styles.icon} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.capture}>
+                    <TouchableOpacity style={styles.capture} onPress={() => this.OpenCropperOnPress()}>
                         <Icon name="crop" style={styles.icon} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.capture} onPress={() => navigation.goBack()} >
+                    <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("Camera")} >
                         <Icon name="camera" style={styles.icon} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("ChooseImage")} >
+                        <Icon name="image" style={styles.icon} />
                     </TouchableOpacity>
                 </View>
 
@@ -78,6 +96,17 @@ export class ImageScreen extends Component {
         );
     }
 
+}
+
+async function CustomAlert(title, message) {
+    const alert = Alert.alert(
+        title,
+        message,
+        [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+        ]
+    );
+    return alert;
 }
 
 export default ImageScreen;
@@ -105,6 +134,12 @@ const styles = StyleSheet.create({
     },
 
     icon: {
-        fontSize: 30
+        fontSize: 25
+    },
+
+    menu: {
+        flex: 0,
+        flexDirection: 'row',
+        justifyContent: 'center'
     }
 });

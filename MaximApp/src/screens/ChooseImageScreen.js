@@ -1,38 +1,62 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, Image, TouchableHighlight, FlatList, SafeAreaView, Text } from 'react-native';
+import React, { PureComponent } from 'react';
+import { View, StyleSheet, Image, TouchableHighlight, FlatList, SafeAreaView } from 'react-native';
 import CameraRoll from "@react-native-community/cameraroll";
 
-export class ChooseImageScreen extends Component {
+const fetchAmount = 50;
+
+export class ChooseImageScreen extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             images: [],
             lastCursor: null,
-            noMorePhotos: false,
+            noMoreImages: false,
             loadingMore: false,
+            refreshing: false,
         };
     }
 
     componentDidMount() {
-        this.LoadImages();
+        this.GetImages({ first: fetchAmount, assetType: 'Photos' })
     }
 
-    LoadImages() {
-        const fetchParams = {
-            first: 25,
-            groupTypes: 'SavedPhotos',
-            assetType: 'Photos',
+    async TryGetImages(fetchParams) {
+        if (!this.state.loadingMore) {
+            this.setState({ loadingMore: true }, () => { this.GetImages(fetchParams) })
+        }
+    }
+
+    async GetImages(fetchParams) {
+        if (this.state.lastCursor) {
+            fetchParams.after = this.state.lastCursor;
+        }
+
+        CameraRoll.getPhotos(fetchParams).then(
+            r => this.AppendImages(r)
+        )
+    }
+
+    AppendImages(data) {
+        const images = data.edges;
+        const nextState = {
+            loadingMore: false,
         };
 
-        CameraRoll.getPhotos(fetchParams)
-            .then(r => {
-                this.setState(previousState => ({
-                    images: previousState.images.concat(r.edges)
-                }))
-            })
-            .catch((err) => {
-                console.log("Error loading images => --- " + err);
-            });
+        if (!data.page_info.has_next_page) {
+            nextState.noMoreImages = true;
+        }
+
+        if (images.length > 0) {
+            nextState.lastCursor = data.page_info.end_cursor;
+            nextState.images = this.state.images.concat(images);
+            this.setState(nextState);
+        }
+    }
+
+    OnEndReached() {
+        if (!this.state.noMoreImages) {
+            this.TryGetImages({ first: fetchAmount, assetType: 'Photos' });
+        }
     }
 
     ImageOnPress(uri) {
@@ -45,6 +69,11 @@ export class ChooseImageScreen extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <FlatList
+                    initialNumToRender={fetchAmount}
+                    onEndReachedThreshold={250}
+                    onEndReached={() => this.OnEndReached()}
+                    refreshing={this.state.refreshing}
+                    onRefresh={() => this.TryGetImages({ first: fetchAmount, assetType: 'Photos' })}
                     data={this.state.images}
                     renderItem={({ item }) => (
                         <View
@@ -53,7 +82,7 @@ export class ChooseImageScreen extends Component {
                                 flexDirection: 'column',
                                 margin: 1
                             }}>
-                            <TouchableHighlight onPress = {() => this.ImageOnPress(item.node.image.uri)}>
+                            <TouchableHighlight onPress={() => this.ImageOnPress(item.node.image.uri)}>
                                 <Image
                                     style={styles.imageThumbnail}
                                     source={{ uri: item.node.image.uri }}
@@ -62,7 +91,7 @@ export class ChooseImageScreen extends Component {
                         </View>
                     )}
                     numColumns={3}
-                    keyExtractor={(item) => item.node.image.uri}
+                    keyExtractor={(item, index) => index}
                 />
             </SafeAreaView>
         );

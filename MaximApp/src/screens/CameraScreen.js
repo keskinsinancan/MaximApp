@@ -50,16 +50,13 @@ export default class CameraScreen extends PureComponent {
             buttonPositive: 'Ok',
             buttonNegative: 'Cancel',
           }}
-          onGoogleVisionBarcodesDetected={({ barcodes }) => {
-            console.log(barcodes);
-          }}
         />
 
         <View style={styles.menu}>
           <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("ChooseImage")} >
             <Icon name="image" style={styles.icon} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.capture} onPress={this.takePicture.bind(this)} >
+          <TouchableOpacity style={styles.capture} onPress={this.TakePicture.bind(this)} >
             <Icon name="camera" style={styles.icon} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.capture} onPress={() => this.SwithCameraOnPress()}>
@@ -70,7 +67,7 @@ export default class CameraScreen extends PureComponent {
     );
   }
 
-  takePicture = async () => {
+  async TakePicture() {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);

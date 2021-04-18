@@ -6,6 +6,7 @@ import ChooseImageScreen from './src/screens/ChooseImageScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ImageScreen from './src/screens/ImageScreen';
 
+
 const Stack = createStackNavigator();
 
 export default class App extends Component {
@@ -14,6 +15,7 @@ export default class App extends Component {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"
+          
         >
           <Stack.Screen name="Home" component={HomeScreen}
             options={
@@ -30,4 +32,5 @@ export default class App extends Component {
       </NavigationContainer>
     );
   }
+
 }

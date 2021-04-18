@@ -1,4 +1,4 @@
-import React, { useState, Component } from 'react';
+import React, { Component } from 'react';
 import { View, Alert, StyleSheet, Image, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CameraRoll from "@react-native-community/cameraroll";
@@ -26,7 +26,6 @@ export class ImageScreen extends Component {
     }
 
     async SaveImageOnPress() {
-        console.log("pressed");
         if (this.state.isImageCropped) {
             try {
                 if (Platform.OS === "android" && !(await this.HasAndroidPermission())) {
@@ -34,15 +33,15 @@ export class ImageScreen extends Component {
                 }
 
                 CameraRoll.save(this.state.image, { type: 'photo' });
-                { CustomAlert("Success", "Image is saved to the gallery.") }
+                {await CustomAlert("Success", "Image is saved to the gallery.") }
             }
             catch (error) {
-                { CustomAlert("Error", "Error saving image!") }
+                {await CustomAlert("Error", "Error saving image!") }
             }
         }
         else {
             {
-                CustomAlert("Warning", "Please Crop the Image Before Saving")
+                await CustomAlert("Warning", "Please Crop the Image Before Saving")
             }
 
         }
@@ -82,14 +81,6 @@ export class ImageScreen extends Component {
                     <TouchableOpacity style={styles.capture} onPress={() => this.OpenCropperOnPress()}>
                         <Icon name="crop" style={styles.icon} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("Camera")} >
-                        <Icon name="camera" style={styles.icon} />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("ChooseImage")} >
-                        <Icon name="image" style={styles.icon} />
-                    </TouchableOpacity>
                 </View>
 
             </View>
@@ -103,7 +94,7 @@ async function CustomAlert(title, message) {
         title,
         message,
         [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
+            { text: "OK"}
         ]
     );
     return alert;

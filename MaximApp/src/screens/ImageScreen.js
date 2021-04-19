@@ -4,6 +4,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CameraRoll from "@react-native-community/cameraroll";
 import ImagePicker from 'react-native-image-crop-picker';
 
+/**
+ *
+ *
+ * @export
+ * @class ImageScreen
+ * @extends {Component}
+ * Image editting screen
+ * User can crop and save the image
+ */
 export class ImageScreen extends Component {
     constructor(props) {
         super(props);
@@ -15,6 +24,7 @@ export class ImageScreen extends Component {
         }
     }
 
+    //checks the write permission of the app 
     async HasAndroidPermission() {
         const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
         const hasPermission = await PermissionsAndroid.check(permission);
@@ -25,18 +35,21 @@ export class ImageScreen extends Component {
         return status === "granted";
     }
 
+    //handles the press event for save button
     async SaveImageOnPress() {
+        //if image is not cropped, that means image is not shaped properly (240x180), to allow the save operation, user has to crop the image
         if (this.state.isImageCropped) {
             try {
                 if (Platform.OS === "android" && !(await this.HasAndroidPermission())) {
                     return;
                 }
-                
-                CameraRoll.save(this.state.image, { type: 'photo', album : 'MaximApp' });
-                {await CustomAlert("Success", "Image is saved to the gallery.") }
+
+                //saves the cropped image to the MaximApp Album
+                CameraRoll.save(this.state.image, { type: 'photo', album: 'MaximApp' });
+                { await CustomAlert("Success", "Image is saved to the gallery.") }
             }
             catch (error) {
-                {await CustomAlert("Error", "Error saving image!") }
+                { await CustomAlert("Error", "Error saving image!") }
             }
         }
         else {
@@ -47,15 +60,19 @@ export class ImageScreen extends Component {
         }
     }
 
+    //Opens the cropper for editting, croppes is used from the package named "react-native-image-crop-picker"
     async OpenCropperOnPress() {
         const imageToEdit = this.state.originalImage != null ? this.state.originalImage : this.state.image;
+        //opens the cropper acorring to the parameters
+        //updates the state after cropping
         ImagePicker.openCropper({
             path: imageToEdit,
             enableRotationGesture: false,
             hideBottomControls: true,
-            compressImageMaxWidth: 180,
+            width: 180,
+            height: 240,
             compressImageMaxHeight: 240,
-            
+            compressImageMaxWidth: 180
         }).then(image => {
             this.setState(previousState => ({
                 image: image.path,
@@ -90,12 +107,13 @@ export class ImageScreen extends Component {
 
 }
 
+//returns an alert jsx element with the title and message
 async function CustomAlert(title, message) {
     const alert = Alert.alert(
         title,
         message,
         [
-            { text: "OK"}
+            { text: "OK" }
         ]
     );
     return alert;

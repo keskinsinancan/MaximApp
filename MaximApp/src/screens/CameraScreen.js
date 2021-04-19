@@ -1,9 +1,14 @@
 
 import React, { PureComponent } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+/**
+ * @export
+ * @class CameraScreen
+ * @extends {PureComponent}
+ */
 export default class CameraScreen extends PureComponent {
   constructor(props) {
     super(props);
@@ -13,6 +18,7 @@ export default class CameraScreen extends PureComponent {
     }
   }
 
+  //Controls the camera switch operation with state
   SwithCameraOnPress() {
     if (this.state.cameraType === 'back') {
       this.setState({
@@ -27,6 +33,13 @@ export default class CameraScreen extends PureComponent {
     }
   }
 
+  ImportImagesOnPress() {
+    this.props.navigation.navigate("ChooseImage", {
+      album: ""
+    });
+  }
+
+  //main render method of the class, returns a camera object
   render() {
     return (
       <View style={styles.container}>
@@ -52,11 +65,12 @@ export default class CameraScreen extends PureComponent {
           }}
         />
 
+        {/* control buttons for the camera operations */}
         <View style={styles.menu}>
-          <TouchableOpacity style={styles.capture} onPress={() => this.props.navigation.navigate("ChooseImage")} >
+          <TouchableOpacity style={styles.capture} onPress={() => this.ImportImagesOnPress()} >
             <Icon name="image" style={styles.icon} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.capture} onPress={this.TakePicture.bind(this)} >
+          <TouchableOpacity style={styles.capture} onPress={() => this.TakePicture()} >
             <Icon name="camera" style={styles.icon} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.capture} onPress={() => this.SwithCameraOnPress()}>
@@ -67,6 +81,7 @@ export default class CameraScreen extends PureComponent {
     );
   }
 
+  //captures the picture when button pressed, updates the state and navigates to the image editting screen with the picture
   async TakePicture() {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };

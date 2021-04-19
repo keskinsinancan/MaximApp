@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableHighlight} from 'react-native';
 
+//handles press gesture of the image
 const ImageOnPress = (uri, navigation) => {
     navigation.navigate("Image", {
         path: uri
     });
 }
 
+//get a item parameter which includes the image info such as url
+//navigates to the image editting screen with the navigation prop
 const ThumbNail = ({ navigation, item }) => {
     return (
         <View style={styles.container}>

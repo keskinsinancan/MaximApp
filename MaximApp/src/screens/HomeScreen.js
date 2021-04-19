@@ -8,18 +8,18 @@ export class HomeScreen extends Component {
     }
 
     CameraIconOnPress() {
-        this.props.navigation.navigate("Camera");
+        this.props.navigation.navigate("Camera"); //navigates to the camera screen
     }
 
     ImportIconOnPress() {
         this.props.navigation.navigate("ChooseImage", {
-            album: ""
+            album: "" //when parameter is null, ChooseImageScreen loads all images from the roll
         });
     }
 
     MaximLibOnPress() {
         this.props.navigation.navigate("ChooseImage", {
-            album: "MaximApp"
+            album: "MaximApp" //parameter to load only editted images before
         });
     }
     render() {
@@ -41,7 +41,8 @@ export class HomeScreen extends Component {
     }
 }
 
-
+//returns a JSC element with icon and text for the main menu, 
+//gets a icon name param 
 function IconWithText(props) {
     return (
         <View>

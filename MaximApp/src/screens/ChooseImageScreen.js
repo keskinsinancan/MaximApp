@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, Image, TouchableHighlight, FlatList, SafeAreaView } from 'react-native';
 import CameraRoll from "@react-native-community/cameraroll";
+import ThumbNail from '../components/ThumbNail';
 
 const fetchAmount = 50;
 
@@ -14,10 +15,12 @@ export class ChooseImageScreen extends PureComponent {
             loadingMore: false,
             refreshing: false,
         };
+
     }
 
     componentDidMount() {
-        this.GetImages({ first: fetchAmount, assetType: 'Photos' })
+        const { album } = this.props.route.params
+        this.GetImages({ first: fetchAmount, assetType: 'Photos', groupName: album })
     }
 
     async TryGetImages(fetchParams) {
@@ -76,19 +79,7 @@ export class ChooseImageScreen extends PureComponent {
                     onRefresh={() => this.TryGetImages({ first: fetchAmount, assetType: 'Photos' })}
                     data={this.state.images}
                     renderItem={({ item }) => (
-                        <View
-                            style={{
-                                flex: 1,
-                                flexDirection: 'column',
-                                margin: 1
-                            }}>
-                            <TouchableHighlight onPress={() => this.ImageOnPress(item.node.image.uri)}>
-                                <Image
-                                    style={styles.imageThumbnail}
-                                    source={{ uri: item.node.image.uri }}
-                                />
-                            </TouchableHighlight>
-                        </View>
+                        <ThumbNail item = {item} navigation = {this.props.navigation} />
                     )}
                     numColumns={3}
                     keyExtractor={(item, index) => index}

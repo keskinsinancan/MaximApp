@@ -31,8 +31,8 @@ export class ImageScreen extends Component {
                 if (Platform.OS === "android" && !(await this.HasAndroidPermission())) {
                     return;
                 }
-
-                CameraRoll.save(this.state.image, { type: 'photo' });
+                
+                CameraRoll.save(this.state.image, { type: 'photo', album : 'MaximApp' });
                 {await CustomAlert("Success", "Image is saved to the gallery.") }
             }
             catch (error) {
@@ -54,7 +54,8 @@ export class ImageScreen extends Component {
             enableRotationGesture: false,
             hideBottomControls: true,
             compressImageMaxWidth: 180,
-            compressImageMaxHeight: 240
+            compressImageMaxHeight: 240,
+            
         }).then(image => {
             this.setState(previousState => ({
                 image: image.path,
